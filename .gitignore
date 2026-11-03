@@ -11,3 +11,6 @@ __pycache__/
 !.env.*.example
 *.log
 *.tsbuildinfo
+
+# Personal portrait sources are local-only; never track or publish.
+/private-assets/

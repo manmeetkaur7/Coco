@@ -23,6 +23,14 @@ def test_sample_restaurant_and_menu():
     assert all(item["price"] > 0 for item in menu["items"])
     assert len({item["id"] for item in menu["items"]}) == len(menu["items"])
 
+
+def test_avatar_foundation_capabilities():
+    data = client.get("/api/v1/assistant/status").json()
+    assert data["avatar_mode"] == "portrait-foundation"
+    assert data["avatar_state_preview_available"] is True
+    assert not data["facial_animation_available"]
+    assert not data["lip_sync_available"]
+
 def test_local_cors():
     response = client.options("/health", headers={"Origin": "http://localhost:3000", "Access-Control-Request-Method": "GET"})
     assert response.headers["access-control-allow-origin"] == "http://localhost:3000"

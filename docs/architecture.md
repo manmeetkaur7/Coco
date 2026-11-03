@@ -6,7 +6,7 @@ Browser → typed API client → FastAPI response schemas → in-memory sample r
 
 ## Boundaries
 
-- Avatar rendering: `frontend/src/components/avatar-display.tsx` owns the static CSS concept. Replace its internals with a renderer later; `features/contracts.ts` defines the future lifecycle port. It is not a realistic 3D human yet.
+- Avatar rendering: `frontend/src/components/avatar-display.tsx` is a controlled 2D portrait renderer. `avatar-experience.tsx` owns development preview controls and private PNG loading. `features/avatar/contracts.ts` defines states, honest capabilities, viseme timing and future lip-sync ports; `features/contracts.ts` retains speech/orchestration boundaries. Whole-image drift is not facial animation. See [Sprint 2](sprint-2-avatar.md).
 - Speech input/output: separate `SpeechInput` and `SpeechOutput` ports. No browser media permissions, audio capture, playback, paid service, or SDK is active.
 - Conversation orchestration: future `ConversationOrchestrator` owns sessions and transcript events. The current transcript is an empty state, never fabricated conversation.
 - Menu management: backend `restaurants.py` contains explicitly fictional data; `MenuRepository` defines a future persistence boundary. UI obtains all restaurant and menu content over HTTP.
@@ -17,6 +17,8 @@ Browser → typed API client → FastAPI response schemas → in-memory sample r
 ## Connection and failure behavior
 
 The client checks health, assistant status, restaurant, and menu on mount, retry, and every 15 seconds. A successful batch reports connected. Any endpoint/network failure or 8-second timeout reports unavailable, with retry. Previously successful content remains visible with a stale-data warning. Requests are cancelled on unmount. Status reflects the last check, not a persistent websocket. All controls are disabled because no conversation session can be created.
+
+The separate development-only avatar buttons preview visual states without starting a session. Portrait loading uses a local same-origin route, independently of backend health. No image or face data is sent to FastAPI. Production refuses photo requests before reading any file; root private-assets stays outside the frontend tracing root, with an additional private-assets trace exclusion. Images are never copied to public/ or image optimization caches.
 
 ## Configuration
 

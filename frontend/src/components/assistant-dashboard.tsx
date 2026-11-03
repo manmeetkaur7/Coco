@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { AvatarDisplay } from "./avatar-display";
+import { AvatarExperience } from "./avatar-experience";
 import { Foundation, loadFoundation } from "@/lib/api";
 type Connection = "connecting" | "connected" | "error";
 export function AssistantDashboard() {
@@ -66,7 +66,7 @@ export function AssistantDashboard() {
         </Link>
         <span className="header-note">THE ART OF HOSPITALITY, REIMAGINED</span>
         <span className="sprint-badge">
-          SPRINT 01 <span>FOUNDATION</span>
+          SPRINT 02 <span>AVATAR FOUNDATION</span>
         </span>
       </header>
       <section className="page-heading">
@@ -117,7 +117,7 @@ export function AssistantDashboard() {
             </span>
             <span className="muted">PREVIEW ENVIRONMENT</span>
           </div>
-          <AvatarDisplay />
+          <AvatarExperience />
           <div className="host-controls">
             <div>
               <strong>A conversation worth waiting for.</strong>
@@ -129,7 +129,7 @@ export function AssistantDashboard() {
               <button
                 className="mic"
                 disabled
-                aria-label="Microphone unavailable in Sprint 1"
+                aria-label="Microphone unavailable — voice integration is planned"
                 title="Speech input is planned"
               >
                 <svg
@@ -176,7 +176,7 @@ export function AssistantDashboard() {
           </div>
           <div className="transcript-footer">
             <span className="small-dot" />
-            {data?.assistant.phase ?? "Sprint 1 · Foundation"}
+            {data?.assistant.phase ?? "Sprint 2 · Avatar foundation"}
             <p>No microphone access. No recorded audio.</p>
           </div>
         </section>

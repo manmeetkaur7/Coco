@@ -2,11 +2,11 @@
 
 A digital human restaurant assistant, designed around thoughtful hospitality. The long-term vision is natural voice conversations, synchronized speech and facial expression, menu understanding, and restaurant ordering.
 
-**Sprint 1 is a foundation preview.** The avatar is a static visual concept. Voice, animation, AI conversations, orders, and PostgreSQL are not implemented. Maison Olive and every menu item are clearly labeled fictional sample data. No paid avatar service or AI key is required.
+**Sprint 2 adds a local portrait avatar foundation.** Coco supports idle, listening, thinking, and speaking visual previews, gentle whole-image motion, and an optional private reference PNG. The user-provided reference image is stored locally in ignored private-assets/ and can be displayed in development. Facial animation, blinking, lip-sync, voice, AI conversations, orders, and PostgreSQL are not implemented. Maison Olive and every menu item are clearly labeled fictional sample data. No paid avatar service or AI key is required. See [Sprint 2 avatar setup and limitations](docs/sprint-2-avatar.md).
 
 ## Structure and stack
 
-- `frontend/`: Next.js App Router, React, TypeScript, Tailwind CSS; responsive charcoal and warm-gold dashboard.
+- `frontend/`: Next.js App Router, React, TypeScript, Tailwind CSS; responsive plum, rose, and champagne dashboard.
 - `backend/`: FastAPI, Pydantic response schemas, Uvicorn, pytest and HTTPX2 tests.
 - `docs/architecture.md`: ownership boundaries, future integration ports, configuration and failure behavior.
 - `.env.example`: overview of configuration. Each app reads only the documented settings.
@@ -41,7 +41,8 @@ The API defaults to http://127.0.0.1:8000. Change `frontend/.env.local` before s
 
 ## Current features
 
-- Responsive branding, static avatar concept, honest empty transcript, disabled microphone/start/end controls.
+- Responsive branding, portrait avatar foundation, honest empty transcript, disabled microphone/start/end controls.
+- Development-only avatar state controls, motion toggle, private PNG loading, and missing/error fallbacks. Original photos stay in ignored root `private-assets/` and are never served in production.
 - Live API connection checks every 15 seconds, loading state, timeout, error notice and retry.
 - Restaurant information and four menu previews fetched from the backend, including prices and dietary labels.
 - Typed API client, response schemas and isolated future integration contracts.
@@ -62,6 +63,8 @@ Frontend:
 Set-Location 'C:\Users\mkghu\Documents\Portfolio-Projects\Coco-AI\frontend'
 npm run lint
 npm run typecheck
+npm run test
+npm run test:e2e
 npm run build
 # Optional: serve the production build locally
 npm run start -- --hostname 127.0.0.1
@@ -82,10 +85,10 @@ For a manual integration check, start both servers, verify sample restaurant/men
 
 ## Planned features — require later sprint approval
 
-Realistic 3D avatar rendering, streaming speech input/output, lip synchronization and expressions, conversation orchestration, provider integration, PostgreSQL menu/order persistence, validated order workflows, authentication and operational hardening. No Sprint 2 implementation is included.
+Rigged 3D avatar rendering, genuine blinking and expressions, streaming speech input/output, lip synchronization, conversation orchestration, provider integration, PostgreSQL menu/order persistence, validated order workflows, authentication and operational hardening. The current 2D portrait effect is not facial animation.
 
 ## Git
 
-Local repository only. Changes remain uncommitted. No GitHub repository, pushes, commits, or deployments are part of Sprint 1.
+Sprint 1 is already tracked in the existing repository. Sprint 2 changes remain uncommitted for your review. No commits, pushes, repository creation, or deployments are performed automatically. Never force-add private-assets or move the original photo to public/.
 
 Toolchain limitation: Next.js lint plugins currently require ESLint 9, whose upstream package is marked deprecated. The latest compatible 9.x is pinned through package-lock.json. See docs/architecture.md for details.

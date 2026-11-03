@@ -7,11 +7,15 @@ class HealthResponse(BaseModel):
 
 class AssistantStatus(BaseModel):
     name: str = "Coco"
-    phase: str = "Sprint 1 · Foundation"
+    phase: str = "Sprint 2 · Avatar foundation"
     conversation_available: bool = False
     avatar_available: bool = False
     voice_available: bool = False
-    message: str = "Voice, AI conversations, and avatar animation are planned features."
+    avatar_mode: Literal["portrait-foundation"] = "portrait-foundation"
+    avatar_state_preview_available: bool = True
+    facial_animation_available: bool = False
+    lip_sync_available: bool = False
+    message: str = "Local portrait state previews are available. Facial animation, voice, and AI conversations are not connected."
 
 class Restaurant(BaseModel):
     id: str

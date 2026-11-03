@@ -27,6 +27,10 @@ export interface AssistantStatus {
   conversation_available: boolean;
   avatar_available: boolean;
   voice_available: boolean;
+  avatar_mode: "portrait-foundation";
+  avatar_state_preview_available: boolean;
+  facial_animation_available: boolean;
+  lip_sync_available: boolean;
   message: string;
 }
 const base = (
