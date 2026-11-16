@@ -1,7 +1,7 @@
 /** Consent-based browser voice sessions. No audio recording or paid provider. */
 export interface RecognitionResultEvent {
   resultIndex: number;
-  results: ArrayLike<{ isFinal: boolean; 0: { transcript: string } }>;
+  results: ArrayLike<{ isFinal: boolean; 0: { transcript: string; confidence?: number } }>;
 }
 export interface Recognition {
   lang: string;
@@ -21,6 +21,7 @@ export type VoiceWindow = Window & {
 };
 export type VoicePhase = "Listening" | "Thinking" | "Speaking" | "Paused" | "Ended";
 export interface VoiceSnapshot {
+  uncertainTranscript: string | null;
   recognitionSupported: boolean;
   synthesisSupported: boolean;
   sessionActive: boolean;
@@ -36,7 +37,7 @@ export interface VoiceSnapshot {
   voices: SpeechSynthesisVoice[];
 }
 const INITIAL: VoiceSnapshot = {
-  recognitionSupported: false, synthesisSupported: false,
+  uncertainTranscript: null, recognitionSupported: false, synthesisSupported: false,
   sessionActive: false, microphoneEnabled: false, processing: false,
   phase: "Ended", reason: "Choose Start Conversation to enable the microphone, or type a message.",
   listening: false, speaking: false, starting: false,
@@ -53,6 +54,7 @@ const errors: Record<string, string> = {
 const RECOVERABLE = new Set(["no-speech", "network", "aborted"]);
 const BACKOFF = [500, 1000, 2000];
 const RESUME_DELAY = 600;
+const ORDER_DETAILS = /\b(yes|no|not|without|remove|cancel|small|medium|large|once|twice|one|two|three|four|five|six|seven|eight|nine|ten|\d+)\b/i;
 // Web Speech has no gender metadata. Prefer known female names, local first.
 const femaleVoiceName = /\b(zira|hazel|susan|heera|kalpana|samantha|victoria|karen|moira|tessa|fiona|veena|sangeeta|jenny|aria|sonia|natasha|neerja|swara)\b|\bfemale\b/i;
 
@@ -67,6 +69,7 @@ export class BrowserVoice {
   private outputPending = false;
   private outputGeneration = 0;
   private turnGeneration = 0;
+  private turnStartedAt?: number;
   private voiceListener?: () => void;
   private restartTimer?: ReturnType<typeof setTimeout>;
   private releaseTimer?: ReturnType<typeof setTimeout>;
@@ -197,12 +200,21 @@ export class BrowserVoice {
     recognition.onresult = (event) => {
       if (!accepting()) return;
       const final: string[] = [], interim: string[] = [];
+      let uncertain = false;
       for (let index = event.resultIndex; index < event.results.length; index++) {
         const result = event.results[index];
-        (result.isFinal ? final : interim).push(result[0].transcript);
+        const { transcript, confidence } = result[0];
+        (result.isFinal ? final : interim).push(transcript);
+        // Missing/zero confidence is common; only use an explicit low score.
+        if (result.isFinal && typeof confidence === "number" && confidence > 0 && confidence < 0.55) uncertain = true;
       }
       this.update({ interim: interim.join(" ") });
       const text = final.join(" ").trim();
+      if (text && uncertain && (ORDER_DETAILS.test(text) || text.trim().split(/\s+/).length > 1)) {
+        this.update({ uncertainTranscript: text });
+        this.pauseMicrophone("I may have misheard your request. Check the text before sending, or resume and try again.");
+        return;
+      }
       if (text) {
         this.retries = this.rapidEnds = 0; this.nextDelay = RESUME_DELAY;
         const turn = this.beginTurn(); this.update({ error: null });
@@ -245,7 +257,14 @@ export class BrowserVoice {
     this.retireRecognition();
   }
   abortRecognition() { this.mute(); }
+  takeUncertainTranscript() {
+    const text = this.state.uncertainTranscript;
+    this.update({ uncertainTranscript: null });
+    return text;
+  }
   beginTurn() {
+    this.turnStartedAt = performance.now();
+    this.update({ uncertainTranscript: null });
     const turn = ++this.turnGeneration;
     this.clearRestart(); this.update({ processing: true, reason: "Processing your request." });
     this.cancelOutput(); this.retireRecognition();
@@ -283,6 +302,12 @@ export class BrowserVoice {
       utterance.onstart = () => {
         if (!current()) return;
         clearTimeout(this.speechTimer);
+        if (this.turnStartedAt !== undefined) {
+          performance.measure("coco:turn-to-speech-start", { start: this.turnStartedAt, end: performance.now() });
+          this.turnStartedAt = undefined;
+        }
+        // Some browser voices omit onend. Recover even after playback started.
+        this.speechTimer = setTimeout(failed, Math.max(15000, Math.min(180000, text.length * 180)));
         this.update({ speaking: true, error: null, reason: "Coco is speaking. The microphone is paused." });
       };
       utterance.onend = () => {
@@ -313,6 +338,8 @@ export class BrowserVoice {
     this.scheduleRestart();
   }
   endSession() {
+    this.turnStartedAt = undefined;
+    this.update({ uncertainTranscript: null });
     ++this.turnGeneration; this.clearRestart();
     this.update({ sessionActive: false, microphoneEnabled: false, processing: false, reason: "Conversation ended. The microphone is off." });
     this.cancelOutput(); this.retireRecognition();

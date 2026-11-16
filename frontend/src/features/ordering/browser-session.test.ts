@@ -37,6 +37,34 @@ beforeEach(() => {
 afterEach(() => { voice.dispose(); vi.clearAllTimers(); vi.useRealTimers(); vi.unstubAllGlobals(); });
 
 describe("consented conversation sessions", () => {
+  it("holds an explicitly low-confidence order for customer correction", async () => {
+    const final = vi.fn();
+    voice.setFinalHandler(final);
+    voice.listen();
+    Input.all[0].onresult?.({ resultIndex: 0, results: [
+      { isFinal: true, 0: { transcript: "Two medium pizzas", confidence: 0.3 } },
+    ] });
+    await vi.advanceTimersByTimeAsync(2000);
+    expect(final).not.toHaveBeenCalled();
+    expect(voice.getSnapshot()).toMatchObject({ phase: "Paused", microphoneEnabled: false });
+    expect(voice.takeUncertainTranscript()).toBe("Two medium pizzas");
+    expect(voice.getSnapshot().uncertainTranscript).toBeNull();
+    voice.listen();
+    expect(voice.getSnapshot().phase).toBe("Listening");
+  });
+  it("stops speaking on interruption and ignores stale playback events", async () => {
+    voice.listen();
+    voice.speak("Which pizza would you like?");
+    outputs[0].onstart?.();
+    const lateStart = outputs[0].onstart;
+    expect(voice.getSnapshot().speaking).toBe(true);
+    voice.finishTurn(voice.beginTurn());
+    lateStart?.();
+    expect(voice.getSnapshot().speaking).toBe(false);
+    await vi.advanceTimersByTimeAsync(600);
+    expect(voice.getSnapshot().phase).toBe("Listening");
+  });
+
   it("never activates on mount and keeps one restart timer after explicit start", async () => {
     await vi.advanceTimersByTimeAsync(15000);
     expect(Input.all).toHaveLength(0);

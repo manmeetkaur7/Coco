@@ -97,6 +97,7 @@ export interface CartSummary {
   readback: string;
 }
 export interface OrderingContext {
+  pending_edit?: { size: string } | null;
   memory?: { recent: { role: "customer" | "assistant"; text: string }[]; preferences: ("vegetarian" | "no_mushrooms" | "no_onions")[]; notes?: string[] };
   pending?: {
     item_id?: string | null;

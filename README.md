@@ -115,6 +115,8 @@ Rigged facial animation/lip-sync, full Punjabi/Hindi ordering, verified local me
 
 ## Git
 
-Sprints 1 and 2 are already tracked in the existing repository. Sprint 3 changes remain uncommitted for your review. No commits, pushes, repository creation, or deployments are performed automatically. Never force-add private-assets or move the original photo to public/.
+Sprints 1 through 3 are tracked in the existing repository. Sprint 4 changes are for local review. No commits, pushes, repository creation, or deployments are performed automatically. Never force-add private-assets or move the original photo to public/.
 
 Toolchain limitation: Next.js lint plugins currently require ESLint 9, whose upstream package is marked deprecated. The latest compatible 9.x is pinned through package-lock.json. See docs/architecture.md for details.
+
+[Sprint 4 conversation, interruption and manual verification](docs/sprint-4-conversational-ordering.md).

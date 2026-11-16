@@ -267,7 +267,7 @@ test("voice events drive real listening, thinking and speaking states", async ({
     "speaking",
   );
   await page
-    .getByRole("button", { name: "Stop speaking", exact: true })
+    .getByRole("button", { name: "Interrupt Coco", exact: true })
     .click();
   await expect(page.locator(".avatar-stage")).toHaveAttribute(
     "data-state",

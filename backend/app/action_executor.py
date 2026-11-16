@@ -9,12 +9,13 @@ from .model_schemas import ConversationPlan, UnsafeModelAction
 from .ordering_engine import handle_turn
 from .ordering_schemas import PendingItem, TurnRequest, TurnResponse
 from .cart_service import summarize
+from .contextual_ordering import REF, reference
 
 
 SOCIAL_WORDS = set("""a about absolutely again all alright am an and any anything are as at be begin can certainly choose choosing clear could course do done don else feel fine for glad go good happy hello help here hi how i if in is it let like m me minute moment more my need no not now of okay on one or order ordering our patient perfect please ready s say shall so some start sure t take tell thank thanks that the then there think this time to together understand us wait waiting want welcome what when whenever which with would you your re ve will we ll have rather change changed mind instead sorry prefer preference question another just little need""".split())
 SOCIAL_WORDS.update({"coco", "today", "may", "rush", "mood", "whenever", "certain", "understood", "absolutely"})
 SOCIAL_WORDS.update({"know", "problem", "decide", "deciding", "hurry", "need", "second", "sec", "back", "once", "thinking", "welcome", "both", "options", "size", "quantity", "choice", "selection"})
-SOCIAL_WORDS.update({"come", "after", "while", "pause", "whenever", "certainly", "absolutely", "understanding", "appreciate", "patience", "continue", "helping", "decided", "helpful", "before", "get", "started", "wait", "until", "resume"})
+SOCIAL_WORDS.update({"come", "after", "while", "pause", "whenever", "certainly", "absolutely", "understanding", "appreciate", "patience", "continue", "helping", "decided", "helpful", "before", "get", "started", "wait", "until", "resume", "item", "items", "assist", "whichever", "appreciate"})
 
 
 def social_speech(text: str) -> str | None:
@@ -63,6 +64,7 @@ def raw_safety(text, menu):
     direct = re.match(r"(?:add|remove|take off) (.+)$", words)
     tail = marker[2] if marker else direct[1] if direct else ""
     if tail:
+        tail = re.sub(rf"\bfor (?:the )?{REF} (?:pizza|item|one)(?: instead)?(?: please)?$", "", tail)
         for option in [*menu.items, *menu.toppings, *[option for item in menu.items for option in item.variations]]:
             for alias in sorted(menu_phrases(option), key=len, reverse=True):
                 tail = re.sub(r"\b" + re.escape(alias) + r"\b", " ", tail)
@@ -72,17 +74,21 @@ def raw_safety(text, menu):
 
 def target_for(plan, request, menu):
     selected = request.context.target_line_id
-    target = plan.target_line_id or selected
-    if not target and len(request.cart.lines) == 1: target = request.cart.lines[0].line_id
-    line = next((line for line in request.cart.lines if line.line_id == target), None)
-    if line is None: raise UnsafeModelAction("A unique cart target is required")
-    named = {item.id for item in menu.items if mentioned(request.text, item) and any(entry.item_id == item.id for entry in request.cart.lines)}
-    if named and line.item_id not in named: raise UnsafeModelAction("Selected target contradicts the named cart item")
-    if selected and target != selected:
-        item = next(item for item in menu.items if item.id == line.item_id)
-        same_item = [entry for entry in request.cart.lines if entry.item_id == item.id]
-        if len(same_item) != 1 or not mentioned(request.text, item):
-            raise UnsafeModelAction("Model changed the selected target without evidence")
+    refs = re.findall(rf"\b{REF} (pizza|item|one)\b", norm(request.text))
+    named = [line for line in request.cart.lines if any(item.id == line.item_id and mentioned(request.text, item) for item in menu.items)]
+    if refs:
+        if len(refs) != 1: raise UnsafeModelAction("More than one line reference")
+        line = reference(request, *refs[0], menu)
+        if line and named and line not in named: raise UnsafeModelAction("Conflicting item references")
+    elif named:
+        line = named[0] if len(named) == 1 else None
+    else:
+        target = selected or (request.cart.lines[0].line_id if len(request.cart.lines) == 1 else None)
+        line = next((entry for entry in request.cart.lines if entry.line_id == target), None)
+    if not line or (plan.target_line_id and plan.target_line_id != line.line_id):
+        raise UnsafeModelAction("A unique, customer-grounded cart target is required")
+    if request.context.pending and plan.intent != "ingredients":
+        raise UnsafeModelAction("Finish or replace the pending selection before editing a cart line")
     return line
 
 
@@ -147,6 +153,9 @@ def execute_plan(plan: ConversationPlan, request, restaurant, menu) -> TurnRespo
         command = f"what is in {item.name}"
     else:
         raw_safety(request.text, menu)
+        words = norm(request.text)
+        if re.match(r"(?:do you (?:have|offer|sell|carry)|is there|are there|is .+ available|how (?:much|many)|what|which|can you tell me)\b", words):
+            raise UnsafeModelAction("A menu question is not permission to alter the cart")
         if plan.intent == "add":
             if re.search(r"\b(remove|delete|drop|skip|forget|cancel|not|don t)\b", norm(request.text)):
                 raise UnsafeModelAction("A negative/removal request cannot add an item")
@@ -155,6 +164,21 @@ def execute_plan(plan: ConversationPlan, request, restaurant, menu) -> TurnRespo
             item = next((item for item in menu.items if item.id == plan.item_id), None)
             if item is None: raise UnsafeModelAction("Unknown menu item")
             pending = request.context.pending
+            from .ordering_engine import matches
+            if any(entry.id != item.id for entry in matches(norm(request.text), menu.items)):
+                raise UnsafeModelAction("The request names a different or additional menu item")
+            modifier_text = words
+            for alias in sorted(menu_phrases(item), key=len, reverse=True):
+                modifier_text = re.sub(r"\b" + re.escape(alias) + r"\b", " ", modifier_text)
+            if matches(modifier_text, menu.toppings):
+                raise UnsafeModelAction("The model add would omit an explicit topping")
+            if not pending and re.search(r"\b(instead|rather|replace)\b", norm(request.text)):
+                raise UnsafeModelAction("A replacement must not become an addition")
+            if pending and pending.item_id and pending.item_id != item.id:
+                if not re.search(r"\b(actually|rather|instead)\b", norm(request.text)):
+                    raise UnsafeModelAction("Changing the pending item needs an explicit correction")
+                copy.context.pending.item_id = None
+                copy.context.pending.choice_item_ids = []
             explicit = mentioned(request.text, item)
             unique = pending and (pending.item_id == item.id or pending.choice_item_ids == [item.id])
             if not explicit:
@@ -173,12 +197,18 @@ def execute_plan(plan: ConversationPlan, request, restaurant, menu) -> TurnRespo
             if not 1 <= quantity <= 20: raise UnsafeModelAction("Quantity outside supported bounds")
             if quantity != (pending.quantity if pending else 1) and not quantity_mentioned(request.text, item, quantity):
                 raise UnsafeModelAction("Quantity was not requested")
-            variation_id = plan.variation_id or (pending.variation_id if pending else None)
+            requested_sizes = matches(norm(request.text), item.variations)
+            if len(requested_sizes) > 1:
+                raise UnsafeModelAction("More than one size was named")
+            if requested_sizes and plan.variation_id and plan.variation_id != requested_sizes[0].id:
+                raise UnsafeModelAction("Proposed size contradicts the request")
+            variation_id = (requested_sizes[0].id if requested_sizes else plan.variation_id) or (pending.variation_id if pending else None)
             variation = next((option for option in item.variations if option.id == variation_id), None)
             if plan.variation_id and (not variation or (not mentioned(request.text, variation) and not (pending and pending.variation_id == plan.variation_id))):
                 raise UnsafeModelAction("Size was not requested or is unsupported")
             if variation and variation.availability == "unavailable": raise UnsafeModelAction("Size unavailable")
-            command = f"{quantity} {variation.name + ' ' if variation else ''}{item.name}"
+            another = "another " if re.search(r"\b(another|additional)\b", norm(request.text)) else ""
+            command = f"{another}{quantity} {variation.name + ' ' if variation else ''}{item.name}"
         else:
             line = target_for(plan, request, menu)
             copy.context.target_line_id = line.line_id
@@ -188,6 +218,9 @@ def execute_plan(plan: ConversationPlan, request, restaurant, menu) -> TurnRespo
                     raise UnsafeModelAction("A different or negative action cannot become a size change")
                 option = next((option for option in item.variations if option.id == plan.variation_id), None)
                 if option is None or not mentioned(request.text, option): raise UnsafeModelAction("Unverified/inferred size change")
+                from .ordering_engine import matches
+                if [entry.id for entry in matches(words, item.variations)] != [option.id]:
+                    raise UnsafeModelAction("Conflicting sizes need clarification")
                 requested = quantity_in(request.text, item, menu)
                 if requested is not None and requested != line.quantity: raise UnsafeModelAction("Size-only action omitted a quantity change")
                 if any(mentioned(request.text, topping) for topping in menu.toppings): raise UnsafeModelAction("Size-only action omitted a topping change")
@@ -195,7 +228,7 @@ def execute_plan(plan: ConversationPlan, request, restaurant, menu) -> TurnRespo
             elif plan.intent == "quantity":
                 if re.search(r"\b(add|remove|delete|cancel|not|don t)\b", norm(request.text)):
                     raise UnsafeModelAction("A different or negative action cannot become a quantity change")
-                if plan.quantity is None or not quantity_mentioned(request.text, item, plan.quantity): raise UnsafeModelAction("Unrequested quantity")
+                if plan.quantity is None or quantity_in(request.text, item, menu) != plan.quantity: raise UnsafeModelAction("Unrequested or ambiguous quantity")
                 if any(mentioned(request.text, option) and option.id != line.variation_id for option in item.variations): raise UnsafeModelAction("Quantity-only action omitted a size change")
                 command = f"make it {plan.quantity}"
             elif plan.intent in {"add_topping", "remove_topping"}:
@@ -250,7 +283,7 @@ def quantity_mentioned(text, item, quantity):
 
 def quantity_in(text, item, menu):
     words = norm(text)
-    words = re.sub(r"\b(that|this) one\b", "that", words)
+    words = re.sub(rf"\b(?:that|this|{REF}) one\b", "that", words)
     for option in [item, *[entry for product in menu.items for entry in product.variations]]:
         for alias in sorted(menu_phrases(option), key=len, reverse=True): words = re.sub(r"\b" + re.escape(alias) + r"\b", " ", words)
     numbers = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen", "twenty"]

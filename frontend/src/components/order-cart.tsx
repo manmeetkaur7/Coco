@@ -12,7 +12,7 @@ export function OrderCart({
   const summary = order.summary;
   const canConfirm =
     !!summary &&
-    !order.context.pending &&
+    !(order.context.pending || order.context.pending_edit) &&
     order.context.review_token === summary.review_token &&
     order.cart.lines.length > 0;
   return (
@@ -221,7 +221,7 @@ export function OrderCart({
         <button
           type="button"
           className="add-cart-button"
-          disabled={order.busy || !order.cart.lines.length || !!order.context.pending}
+          disabled={order.busy || !order.cart.lines.length || !!(order.context.pending || order.context.pending_edit)}
           onClick={() => void order.review()}
         >
           Review draft
@@ -235,7 +235,7 @@ export function OrderCart({
           Clear cart
         </button>
       </div>
-      {order.context.pending && (
+      {(order.context.pending || order.context.pending_edit) && (
         <p className="field-note" role="status">
           Finish the pending item choice in the conversation before reviewing
           or confirming, or say “start over” to clear the draft.

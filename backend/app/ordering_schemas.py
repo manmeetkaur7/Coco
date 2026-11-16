@@ -159,7 +159,13 @@ class PendingItem(StrictModel):
     topping_ids: list[str] = Field(default_factory=list, max_length=20)
     choice_item_ids: list[str] = Field(default_factory=list, max_length=25)
 
+class PendingEdit(StrictModel):
+    size: Literal["personal", "small", "medium", "large", "extra large", "x large"]
+
+
 class OrderingContext(StrictModel):
+    pending_edit: PendingEdit | None = None
+    duplicate_line_id: str | None = None
     pending: PendingItem | None = None
     target_line_id: str | None = None
     review_token: str | None = None
@@ -193,6 +199,8 @@ class TurnResponse(StrictModel):
     language: Literal["en-US"] = "en-US"
     engine: Literal["deterministic", "local-model"] = "deterministic"
     model: ModelState = Field(default_factory=ModelState)
+    inference_ms: float | None = None
+    fallback_reason: Literal["timeout", "busy", "unavailable", "invalid", "rejected"] | None = None
     cart: Cart
     context: OrderingContext
     summary: CartSummary

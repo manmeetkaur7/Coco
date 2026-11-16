@@ -25,6 +25,8 @@ def handle_turn(request: TurnRequest, restaurant: RestaurantConfig, menu: Catalo
     context = request.context.model_copy(deep=True)
     summary = summarize(cart, restaurant, menu)
     text = normalized(request.text)
+    if re.search(r"\b(?:another|additional)\b", text):
+        text = re.sub(r"\b(?:another|additional)\b", "a", text)
     # Bounded correction normalization; never strip arbitrary modifiers.
     correction = re.fullmatch(r"(?:actually )?(?:make|change) (?:that|it)(?: to)? (?:a )?(personal|small|medium|large|extra large|x large)(?: please)?", text)
     if correction:
@@ -90,6 +92,9 @@ def handle_turn(request: TurnRequest, restaurant: RestaurantConfig, menu: Catalo
         context.review_token = None
         return answer("I have not confirmed your draft. What would you like to change? Your cart is unchanged.")
     confirmation = text in ["confirm my order", "confirm order", "confirm demo", "yes", "yes please", "review order", "read back my order"]
+    if (done_adding or confirmation) and context.pending_edit:
+        context.review_token = None
+        return answer("Which cart item should I change before we review the order?")
     if (done_adding or confirmation) and context.pending:
         context.review_token = None
         return answer("One item still needs a menu choice or size. Please finish choosing it, or say 'start over'. Your draft is not confirmed.")
@@ -277,5 +282,12 @@ def handle_turn(request: TurnRequest, restaurant: RestaurantConfig, menu: Catalo
     if not item.variations: pending.variation_id = None
     added = [key for key in pending.topping_ids if key not in item.included_topping_ids]
     line = CartLine(line_id=str(uuid4()), item_id=item.id, quantity=pending.quantity, variation_id=pending.variation_id, added_topping_ids=added)
+    duplicate = next((existing for existing in cart.lines if existing.model_dump(exclude={"line_id"}) == line.model_dump(exclude={"line_id"})), None)
+    if duplicate and not re.search(r"\b(another|additional)\b", normalized(request.text)):
+        context = request.context.model_copy(deep=True)
+        context.pending = None
+        context.review_token = None
+        context.duplicate_line_id = duplicate.line_id
+        return answer(f"You already have that {item.name} selection. Would you like another?")
     size_label = f"{variation.name} " if variation else ""
-    return commit([*cart.lines, line], f"Added {pending.quantity} {size_label}{item.name} to your local draft. Prices and availability still need location verification. Would you like to add anything to the order?")
+    return commit([*cart.lines, line], f"Added {pending.quantity} {size_label}{item.name}. Would you like to add anything to the order?")

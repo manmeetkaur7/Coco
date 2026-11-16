@@ -27,6 +27,7 @@ export function AssistantDashboard() {
     [send, language],
   );
   const voice = useBrowserVoice(onFinal);
+  const submission = useRef(0);
   const played = useRef<string | null>(null);
   const log = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -106,14 +107,20 @@ export function AssistantDashboard() {
         ? "Connecting to backend"
         : "Backend unavailable";
   async function submit() {
-    if (!text.trim() || order.busy || connection !== "connected") return;
+    if (!text.trim() || connection !== "connected") return;
+    const operation = ++submission.current;
     const turn = voice.controller.beginTurn();
     const value = text;
     setText("");
     try {
       const ok = await order.send(value, language);
-      if (!ok) setText((current) => current || value);
+      if (!ok && operation === submission.current) setText((current) => current || value);
     } finally { voice.controller.finishTurn(turn); }
+  }
+  function interruptReply() {
+    submission.current++;
+    order.cancelPending();
+    voice.controller.finishTurn(voice.controller.beginTurn());
   }
   async function interrupt(action: () => Promise<boolean>) {
     const turn = voice.controller.beginTurn();
@@ -141,7 +148,7 @@ export function AssistantDashboard() {
         </Link>
         <span className="header-note">THE ART OF HOSPITALITY, REIMAGINED</span>
         <span className="sprint-badge">
-          SPRINT 03 <span>VOICE ORDERING</span>
+          SPRINT 04 <span>CONVERSATIONAL ORDERING</span>
         </span>
       </header>
       <section className="page-heading">
@@ -253,6 +260,7 @@ export function AssistantDashboard() {
                 className="secondary"
                 disabled={!order.active && !voice.sessionActive}
                 onClick={() => {
+                  submission.current++;
                   voice.controller.stopAll();
                   order.end();
                 }}
@@ -359,6 +367,14 @@ export function AssistantDashboard() {
               >
                 Stop speaking
               </button>
+              <button
+                type="button"
+                className="secondary"
+                onClick={interruptReply}
+                disabled={!order.busy && !voice.speaking && !voice.processing}
+              >
+                Interrupt Coco
+              </button>
             </div>
           </div>
         </section>
@@ -402,6 +418,15 @@ export function AssistantDashboard() {
               </p>
             </div>
           )}
+          {voice.uncertainTranscript && (
+            <p className="field-note">
+              Heard: &ldquo;{voice.uncertainTranscript}&rdquo;.{" "}
+              <button type="button" className="secondary" onClick={() => {
+                const heard = voice.controller.takeUncertainTranscript();
+                if (heard) setText(heard);
+              }}>Edit heard text</button>
+            </p>
+          )}
           <form
             className="conversation-form"
             onSubmit={(event) => {
@@ -424,24 +449,23 @@ export function AssistantDashboard() {
               className="add-cart-button"
               type="submit"
               disabled={
-                order.busy ||
                 !text.trim() ||
                 connection !== "connected"
               }
             >
-              {order.busy ? "Processing…" : "Send message"}
+              {order.busy && !text.trim() ? "Processing…" : "Send message"}
             </button>
             <p id="message-help" className="field-note" role="status">
               {connection !== "connected"
                 ? "You can type now. Sending becomes available when the backend connects."
                 : order.busy
-                  ? "Coco is processing your message. You can type your next message now."
+                  ? "Coco is processing your message. Send a correction or choose Interrupt Coco to stop the current reply."
                   : "Send a message to begin. No microphone or Start Conversation button required."}
             </p>
           </form>
           <div className="transcript-footer">
             <span className="small-dot" />
-            {data?.assistant.phase ?? "Sprint 3 · Voice ordering"}
+            {data?.assistant.phase ?? "Sprint 4 · Conversational ordering"}
             <p>No real orders. No payment. No audio recordings.</p>
           </div>
         </section>

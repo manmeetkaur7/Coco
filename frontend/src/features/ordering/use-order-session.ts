@@ -117,14 +117,18 @@ export function useOrderSession() {
     ]);
     setAnnouncement({ id: crypto.randomUUID(), text, language });
   };
-  const end = () => {
+  const cancelPending = useCallback(() => {
     generation.current++;
     controller.current?.abort();
     controller.current = null;
     inFlight.current = false;
     setBusy(false);
-    setActive(false);
     setAnnouncement(null);
+    setError(null);
+  }, []);
+  const end = () => {
+    cancelPending();
+    setActive(false);
     setContext({});
     append(
       "assistant",
@@ -133,7 +137,8 @@ export function useOrderSession() {
   };
   const send = useCallback(
     async (text: string, language: LanguageCode = "en-US") => {
-      if (!text.trim() || inFlight.current) return false;
+      if (!text.trim()) return false;
+      if (inFlight.current) cancelPending();
       setActive(true);
       append("customer", text.trim(), language);
       return run(async (signal, current) => {
@@ -153,7 +158,7 @@ export function useOrderSession() {
         setAnnouncement({ id: crypto.randomUUID(), text: result.reply, language: result.language, sessionAction: result.session_action });
       });
     },
-    [append, cart, context, run],
+    [append, cart, context, run, cancelPending],
   );
   const replaceCart = useCallback(
     async (candidate: Cart, notice = "Updated your local draft cart.") =>
@@ -235,6 +240,7 @@ export function useOrderSession() {
     announcement,
     start,
     end,
+    cancelPending,
     send,
     addLine,
     updateLine,
