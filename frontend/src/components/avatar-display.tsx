@@ -7,6 +7,7 @@ export interface AvatarDisplayProps {
   portraitSrc?: string;
   motionEnabled?: boolean;
   onPortraitError?: () => void;
+  activityDescription?: string;
 }
 
 /** A 2D portrait with ambient motion, not a facial animation rig. */
@@ -15,6 +16,7 @@ export function AvatarDisplay({
   portraitSrc,
   motionEnabled = true,
   onPortraitError,
+  activityDescription,
 }: AvatarDisplayProps) {
   const copy = AVATAR_STATE_COPY[state];
   return (
@@ -68,7 +70,7 @@ export function AvatarDisplay({
         <span className="avatar-state-light" aria-hidden="true" />
         <span>
           {copy.label}
-          <small>{copy.description}</small>
+          <small>{activityDescription ?? copy.description}</small>
         </span>
       </div>
       <div className="avatar-caption">

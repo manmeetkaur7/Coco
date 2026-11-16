@@ -10,7 +10,10 @@ def test_capabilities_are_honest():
     response = client.get("/api/v1/assistant/status")
     assert response.status_code == 200
     data = response.json()
-    assert not any(data[key] for key in ["conversation_available", "voice_available", "avatar_available"])
+    assert data["conversation_available"] is True
+    assert data["conversation_engine"] == "deterministic"
+    assert data["llm_available"] is False
+    assert not data["voice_available"] and not data["avatar_available"]
 
 def test_sample_restaurant_and_menu():
     restaurant = client.get("/api/v1/restaurants/demo").json()

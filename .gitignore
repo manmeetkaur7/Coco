@@ -14,3 +14,6 @@ __pycache__/
 
 # Personal portrait sources are local-only; never track or publish.
 /private-assets/
+
+# Isolated browser-test Next.js output.
+/frontend/.next-test/

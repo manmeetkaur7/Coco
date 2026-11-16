@@ -7,15 +7,18 @@ class HealthResponse(BaseModel):
 
 class AssistantStatus(BaseModel):
     name: str = "Coco"
-    phase: str = "Sprint 2 · Avatar foundation"
-    conversation_available: bool = False
+    phase: str = "Sprint 3 · Voice ordering"
+    conversation_available: bool = True
+    conversation_engine: str = "deterministic"
+    llm_available: bool = False
+    browser_voice_integration: bool = True
     avatar_available: bool = False
     voice_available: bool = False
     avatar_mode: Literal["portrait-foundation"] = "portrait-foundation"
     avatar_state_preview_available: bool = True
     facial_animation_available: bool = False
     lip_sync_available: bool = False
-    message: str = "Local portrait state previews are available. Facial animation, voice, and AI conversations are not connected."
+    message: str = "Deterministic English demo ordering with browser-dependent voice. No LLM, facial animation, or real order submission."
 
 class Restaurant(BaseModel):
     id: str

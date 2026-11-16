@@ -1,0 +1,816 @@
+{
+  "restaurant": {
+    "id": "round-table",
+    "name": "Round Table Pizza",
+    "address": null,
+    "location_id": null,
+    "menu_version": "rt-national-2026-11-03-v1",
+    "source_url": "https://www.roundtablepizza.com/menu/",
+    "tax": {
+      "rate": null
+    },
+    "promotions": [],
+    "missing_data": [
+      "Restaurant location and address",
+      "All local item and size prices",
+      "All topping and add-on charges",
+      "Local availability and customization rules",
+      "Tax rate and tax treatment",
+      "Beverage brands and flavors",
+      "Current local deals and promotions",
+      "Wing sauces and extra-cheese options"
+    ]
+  },
+  "menu": {
+    "restaurant_id": "round-table",
+    "version": "rt-national-2026-11-03-v1",
+    "verified_on": "2026-11-03",
+    "source_urls": [
+      "https://www.roundtablepizza.com/menu/",
+      "https://www.roundtablepizza.com/wp-content/uploads/2024/08/Round-Table-Pizza-Nutritional-Information-Guide-August.pdf"
+    ],
+    "categories": [
+      {
+        "id": "specialty",
+        "name": "Specialty Pizzas"
+      },
+      {
+        "id": "create-your-own",
+        "name": "Create Your Own Pizza"
+      },
+      {
+        "id": "sides",
+        "name": "Appetizers and Sides"
+      },
+      {
+        "id": "wings",
+        "name": "Wings"
+      },
+      {
+        "id": "salads",
+        "name": "Salads"
+      },
+      {
+        "id": "desserts",
+        "name": "Desserts"
+      },
+      {
+        "id": "beverages",
+        "name": "Beverages"
+      },
+      {
+        "id": "deals",
+        "name": "Deals and Combos",
+        "note": "No location-specific deals have been verified."
+      }
+    ],
+    "toppings": [
+      {
+        "id": "pepperoni",
+        "name": "Pepperoni",
+        "aliases": [
+          "pepperoni",
+          "classic pepperoni"
+        ],
+        "source_url": "https://www.roundtablepizza.com/wp-content/uploads/2024/08/Round-Table-Pizza-Nutritional-Information-Guide-August.pdf",
+        "price": null,
+        "availability": "unknown"
+      },
+      {
+        "id": "mushrooms",
+        "name": "Mushrooms",
+        "aliases": [
+          "mushrooms",
+          "mushroom"
+        ],
+        "source_url": "https://www.roundtablepizza.com/wp-content/uploads/2024/08/Round-Table-Pizza-Nutritional-Information-Guide-August.pdf",
+        "price": null,
+        "availability": "unknown"
+      },
+      {
+        "id": "yellow-onions",
+        "name": "Yellow Onions",
+        "aliases": [
+          "yellow onions",
+          "onions",
+          "onion"
+        ],
+        "source_url": "https://www.roundtablepizza.com/wp-content/uploads/2024/08/Round-Table-Pizza-Nutritional-Information-Guide-August.pdf",
+        "price": null,
+        "availability": "unknown"
+      },
+      {
+        "id": "red-onions",
+        "name": "Red Onions",
+        "aliases": [
+          "red onions"
+        ],
+        "source_url": "https://www.roundtablepizza.com/wp-content/uploads/2024/08/Round-Table-Pizza-Nutritional-Information-Guide-August.pdf",
+        "price": null,
+        "availability": "unknown"
+      },
+      {
+        "id": "green-peppers",
+        "name": "Green Peppers",
+        "aliases": [
+          "green peppers"
+        ],
+        "source_url": "https://www.roundtablepizza.com/wp-content/uploads/2024/08/Round-Table-Pizza-Nutritional-Information-Guide-August.pdf",
+        "price": null,
+        "availability": "unknown"
+      },
+      {
+        "id": "black-olives",
+        "name": "Black Olives",
+        "aliases": [
+          "black olives",
+          "olives"
+        ],
+        "source_url": "https://www.roundtablepizza.com/wp-content/uploads/2024/08/Round-Table-Pizza-Nutritional-Information-Guide-August.pdf",
+        "price": null,
+        "availability": "unknown"
+      },
+      {
+        "id": "salami",
+        "name": "Salami",
+        "aliases": [
+          "salami"
+        ],
+        "source_url": "https://www.roundtablepizza.com/wp-content/uploads/2024/08/Round-Table-Pizza-Nutritional-Information-Guide-August.pdf",
+        "price": null,
+        "availability": "unknown"
+      },
+      {
+        "id": "italian-sausage",
+        "name": "Italian Sausage",
+        "aliases": [
+          "italian sausage",
+          "sausage"
+        ],
+        "source_url": "https://www.roundtablepizza.com/wp-content/uploads/2024/08/Round-Table-Pizza-Nutritional-Information-Guide-August.pdf",
+        "price": null,
+        "availability": "unknown"
+      },
+      {
+        "id": "mini-pepperoni",
+        "name": "Mini Pepperoni",
+        "aliases": [
+          "mini pepperoni"
+        ],
+        "source_url": "https://www.roundtablepizza.com/wp-content/uploads/2024/08/Round-Table-Pizza-Nutritional-Information-Guide-August.pdf",
+        "price": null,
+        "availability": "unknown"
+      }
+    ],
+    "add_ons": [],
+    "items": [
+      {
+        "id": "king-arthur",
+        "name": "King Arthur’s Supreme",
+        "category_id": "specialty",
+        "kind": "pizza",
+        "description": "Meat and vegetable pizza with red sauce.",
+        "ingredients": [
+          "Pepperoni",
+          "Italian sausage",
+          "Salami",
+          "Linguiça",
+          "Mushrooms",
+          "Green peppers",
+          "Yellow onions",
+          "Black olives",
+          "Zesty red sauce"
+        ],
+        "aliases": [
+          "king arthur",
+          "king arthur supreme"
+        ],
+        "source_url": "https://www.roundtablepizza.com/menu/",
+        "price": null,
+        "availability": "unknown",
+        "variations": [
+          {
+            "id": "personal",
+            "name": "Personal",
+            "aliases": [
+              "personal",
+              "personal"
+            ],
+            "source_url": "https://www.roundtablepizza.com/menu/",
+            "price": null
+          },
+          {
+            "id": "small",
+            "name": "Small",
+            "aliases": [
+              "small",
+              "small"
+            ],
+            "source_url": "https://www.roundtablepizza.com/menu/",
+            "price": null
+          },
+          {
+            "id": "medium",
+            "name": "Medium",
+            "aliases": [
+              "medium",
+              "medium"
+            ],
+            "source_url": "https://www.roundtablepizza.com/menu/",
+            "price": null
+          },
+          {
+            "id": "large",
+            "name": "Large",
+            "aliases": [
+              "large",
+              "large"
+            ],
+            "source_url": "https://www.roundtablepizza.com/menu/",
+            "price": null
+          },
+          {
+            "id": "x-large",
+            "name": "X-Large",
+            "aliases": [
+              "x-large",
+              "x-large"
+            ],
+            "source_url": "https://www.roundtablepizza.com/menu/",
+            "price": null
+          }
+        ],
+        "topping_ids": [
+          "pepperoni",
+          "mushrooms",
+          "yellow-onions",
+          "red-onions",
+          "green-peppers",
+          "black-olives",
+          "salami",
+          "italian-sausage",
+          "mini-pepperoni"
+        ],
+        "included_topping_ids": [
+          "pepperoni",
+          "italian-sausage",
+          "salami",
+          "mushrooms",
+          "green-peppers",
+          "yellow-onions",
+          "black-olives"
+        ],
+        "add_on_ids": []
+      },
+      {
+        "id": "montague",
+        "name": "Montague’s All Meat Marvel",
+        "category_id": "specialty",
+        "kind": "pizza",
+        "description": "Four-meat pizza with red sauce.",
+        "ingredients": [
+          "Italian sausage",
+          "Pepperoni",
+          "Salami",
+          "Linguiça",
+          "Zesty red sauce"
+        ],
+        "aliases": [
+          "montague",
+          "all meat marvel"
+        ],
+        "source_url": "https://www.roundtablepizza.com/menu/",
+        "price": null,
+        "availability": "unknown",
+        "variations": [
+          {
+            "id": "personal",
+            "name": "Personal",
+            "aliases": [
+              "personal",
+              "personal"
+            ],
+            "source_url": "https://www.roundtablepizza.com/menu/",
+            "price": null
+          },
+          {
+            "id": "small",
+            "name": "Small",
+            "aliases": [
+              "small",
+              "small"
+            ],
+            "source_url": "https://www.roundtablepizza.com/menu/",
+            "price": null
+          },
+          {
+            "id": "medium",
+            "name": "Medium",
+            "aliases": [
+              "medium",
+              "medium"
+            ],
+            "source_url": "https://www.roundtablepizza.com/menu/",
+            "price": null
+          },
+          {
+            "id": "large",
+            "name": "Large",
+            "aliases": [
+              "large",
+              "large"
+            ],
+            "source_url": "https://www.roundtablepizza.com/menu/",
+            "price": null
+          },
+          {
+            "id": "x-large",
+            "name": "X-Large",
+            "aliases": [
+              "x-large",
+              "x-large"
+            ],
+            "source_url": "https://www.roundtablepizza.com/menu/",
+            "price": null
+          }
+        ],
+        "topping_ids": [
+          "pepperoni",
+          "mushrooms",
+          "yellow-onions",
+          "red-onions",
+          "green-peppers",
+          "black-olives",
+          "salami",
+          "italian-sausage",
+          "mini-pepperoni"
+        ],
+        "included_topping_ids": [
+          "italian-sausage",
+          "pepperoni",
+          "salami"
+        ],
+        "add_on_ids": []
+      },
+      {
+        "id": "guinevere",
+        "name": "Guinevere’s Garden Delight",
+        "category_id": "specialty",
+        "kind": "pizza",
+        "description": "Vegetable pizza with red sauce.",
+        "ingredients": [
+          "Tomatoes",
+          "Mushrooms",
+          "Green peppers",
+          "Yellow onions",
+          "Black olives",
+          "Zesty red sauce"
+        ],
+        "aliases": [
+          "guinevere",
+          "garden delight"
+        ],
+        "source_url": "https://www.roundtablepizza.com/menu/",
+        "price": null,
+        "availability": "unknown",
+        "variations": [
+          {
+            "id": "personal",
+            "name": "Personal",
+            "aliases": [
+              "personal",
+              "personal"
+            ],
+            "source_url": "https://www.roundtablepizza.com/menu/",
+            "price": null
+          },
+          {
+            "id": "small",
+            "name": "Small",
+            "aliases": [
+              "small",
+              "small"
+            ],
+            "source_url": "https://www.roundtablepizza.com/menu/",
+            "price": null
+          },
+          {
+            "id": "medium",
+            "name": "Medium",
+            "aliases": [
+              "medium",
+              "medium"
+            ],
+            "source_url": "https://www.roundtablepizza.com/menu/",
+            "price": null
+          },
+          {
+            "id": "large",
+            "name": "Large",
+            "aliases": [
+              "large",
+              "large"
+            ],
+            "source_url": "https://www.roundtablepizza.com/menu/",
+            "price": null
+          },
+          {
+            "id": "x-large",
+            "name": "X-Large",
+            "aliases": [
+              "x-large",
+              "x-large"
+            ],
+            "source_url": "https://www.roundtablepizza.com/menu/",
+            "price": null
+          }
+        ],
+        "topping_ids": [
+          "pepperoni",
+          "mushrooms",
+          "yellow-onions",
+          "red-onions",
+          "green-peppers",
+          "black-olives",
+          "salami",
+          "italian-sausage",
+          "mini-pepperoni"
+        ],
+        "included_topping_ids": [
+          "mushrooms",
+          "green-peppers",
+          "yellow-onions",
+          "black-olives"
+        ],
+        "add_on_ids": []
+      },
+      {
+        "id": "double-play",
+        "name": "Double Play Pepperoni Pizza",
+        "category_id": "specialty",
+        "kind": "pizza",
+        "description": "Classic and mini pepperoni with red sauce.",
+        "ingredients": [
+          "Classic pepperoni",
+          "Mini pepperoni",
+          "Zesty red sauce"
+        ],
+        "aliases": [
+          "double play pepperoni",
+          "double play"
+        ],
+        "source_url": "https://www.roundtablepizza.com/menu/",
+        "price": null,
+        "availability": "unknown",
+        "variations": [
+          {
+            "id": "personal",
+            "name": "Personal",
+            "aliases": [
+              "personal",
+              "personal"
+            ],
+            "source_url": "https://www.roundtablepizza.com/menu/",
+            "price": null
+          },
+          {
+            "id": "small",
+            "name": "Small",
+            "aliases": [
+              "small",
+              "small"
+            ],
+            "source_url": "https://www.roundtablepizza.com/menu/",
+            "price": null
+          },
+          {
+            "id": "medium",
+            "name": "Medium",
+            "aliases": [
+              "medium",
+              "medium"
+            ],
+            "source_url": "https://www.roundtablepizza.com/menu/",
+            "price": null
+          },
+          {
+            "id": "large",
+            "name": "Large",
+            "aliases": [
+              "large",
+              "large"
+            ],
+            "source_url": "https://www.roundtablepizza.com/menu/",
+            "price": null
+          },
+          {
+            "id": "x-large",
+            "name": "X-Large",
+            "aliases": [
+              "x-large",
+              "x-large"
+            ],
+            "source_url": "https://www.roundtablepizza.com/menu/",
+            "price": null
+          }
+        ],
+        "topping_ids": [
+          "pepperoni",
+          "mushrooms",
+          "yellow-onions",
+          "red-onions",
+          "green-peppers",
+          "black-olives",
+          "salami",
+          "italian-sausage",
+          "mini-pepperoni"
+        ],
+        "included_topping_ids": [
+          "pepperoni",
+          "mini-pepperoni"
+        ],
+        "add_on_ids": []
+      },
+      {
+        "id": "create-your-own",
+        "name": "Create Your Own Pizza",
+        "category_id": "create-your-own",
+        "kind": "pizza",
+        "description": "Ingredient choices appear in the dated guide; the base recipe needs location confirmation.",
+        "ingredients": [],
+        "aliases": [
+          "create your own",
+          "build your own",
+          "custom pizza"
+        ],
+        "source_url": "https://www.roundtablepizza.com/wp-content/uploads/2024/08/Round-Table-Pizza-Nutritional-Information-Guide-August.pdf",
+        "price": null,
+        "availability": "unknown",
+        "variations": [
+          {
+            "id": "personal",
+            "name": "Personal",
+            "aliases": [
+              "personal",
+              "personal"
+            ],
+            "source_url": "https://www.roundtablepizza.com/menu/",
+            "price": null
+          },
+          {
+            "id": "small",
+            "name": "Small",
+            "aliases": [
+              "small",
+              "small"
+            ],
+            "source_url": "https://www.roundtablepizza.com/menu/",
+            "price": null
+          },
+          {
+            "id": "medium",
+            "name": "Medium",
+            "aliases": [
+              "medium",
+              "medium"
+            ],
+            "source_url": "https://www.roundtablepizza.com/menu/",
+            "price": null
+          },
+          {
+            "id": "large",
+            "name": "Large",
+            "aliases": [
+              "large",
+              "large"
+            ],
+            "source_url": "https://www.roundtablepizza.com/menu/",
+            "price": null
+          },
+          {
+            "id": "x-large",
+            "name": "X-Large",
+            "aliases": [
+              "x-large",
+              "x-large"
+            ],
+            "source_url": "https://www.roundtablepizza.com/menu/",
+            "price": null
+          }
+        ],
+        "topping_ids": [
+          "pepperoni",
+          "mushrooms",
+          "yellow-onions",
+          "red-onions",
+          "green-peppers",
+          "black-olives",
+          "salami",
+          "italian-sausage",
+          "mini-pepperoni"
+        ],
+        "included_topping_ids": [],
+        "add_on_ids": []
+      },
+      {
+        "id": "garlic-twists",
+        "name": "Garlic Parmesan Twists",
+        "category_id": "sides",
+        "kind": "side",
+        "description": "Garlic and cheese baked twists.",
+        "ingredients": [],
+        "aliases": [
+          "garlic parmesan twists",
+          "garlic twists"
+        ],
+        "source_url": "https://www.roundtablepizza.com/menu/",
+        "price": null,
+        "availability": "unknown",
+        "variations": [],
+        "topping_ids": [],
+        "included_topping_ids": [],
+        "add_on_ids": []
+      },
+      {
+        "id": "garlic-bread",
+        "name": "Garlic Bread",
+        "category_id": "sides",
+        "kind": "side",
+        "description": "Garlic-herb ciabatta.",
+        "ingredients": [],
+        "aliases": [
+          "garlic bread"
+        ],
+        "source_url": "https://www.roundtablepizza.com/menu/",
+        "price": null,
+        "availability": "unknown",
+        "variations": [],
+        "topping_ids": [],
+        "included_topping_ids": [],
+        "add_on_ids": []
+      },
+      {
+        "id": "classic-wings",
+        "name": "Classic Wings",
+        "category_id": "wings",
+        "kind": "wings",
+        "description": "Seasoned wings; sauces require location confirmation.",
+        "ingredients": [],
+        "aliases": [
+          "classic wings"
+        ],
+        "source_url": "https://www.roundtablepizza.com/menu/",
+        "price": null,
+        "availability": "unknown",
+        "variations": [
+          {
+            "id": "6",
+            "name": "6 count",
+            "aliases": [
+              "6"
+            ],
+            "source_url": "https://www.roundtablepizza.com/menu/",
+            "price": null
+          },
+          {
+            "id": "12",
+            "name": "12 count",
+            "aliases": [
+              "12"
+            ],
+            "source_url": "https://www.roundtablepizza.com/menu/",
+            "price": null
+          },
+          {
+            "id": "24",
+            "name": "24 count",
+            "aliases": [
+              "24"
+            ],
+            "source_url": "https://www.roundtablepizza.com/menu/",
+            "price": null
+          }
+        ],
+        "topping_ids": [],
+        "included_topping_ids": [],
+        "add_on_ids": []
+      },
+      {
+        "id": "boneless-wings",
+        "name": "Boneless Wings",
+        "category_id": "wings",
+        "kind": "wings",
+        "description": "Boneless seasoned wings.",
+        "ingredients": [],
+        "aliases": [
+          "boneless wings"
+        ],
+        "source_url": "https://www.roundtablepizza.com/menu/",
+        "price": null,
+        "availability": "unknown",
+        "variations": [
+          {
+            "id": "6",
+            "name": "6 count",
+            "aliases": [
+              "6"
+            ],
+            "source_url": "https://www.roundtablepizza.com/menu/",
+            "price": null
+          },
+          {
+            "id": "12",
+            "name": "12 count",
+            "aliases": [
+              "12"
+            ],
+            "source_url": "https://www.roundtablepizza.com/menu/",
+            "price": null
+          },
+          {
+            "id": "24",
+            "name": "24 count",
+            "aliases": [
+              "24"
+            ],
+            "source_url": "https://www.roundtablepizza.com/menu/",
+            "price": null
+          }
+        ],
+        "topping_ids": [],
+        "included_topping_ids": [],
+        "add_on_ids": []
+      },
+      {
+        "id": "garden-salad",
+        "name": "Garden Salad",
+        "category_id": "salads",
+        "kind": "salad",
+        "description": "Greens, vegetables and croutons.",
+        "ingredients": [],
+        "aliases": [
+          "garden salad"
+        ],
+        "source_url": "https://www.roundtablepizza.com/menu/",
+        "price": null,
+        "availability": "unknown",
+        "variations": [
+          {
+            "id": "individual",
+            "name": "Individual",
+            "source_url": "https://www.roundtablepizza.com/menu/",
+            "price": null
+          },
+          {
+            "id": "family",
+            "name": "Family",
+            "source_url": "https://www.roundtablepizza.com/menu/",
+            "price": null
+          }
+        ],
+        "topping_ids": [],
+        "included_topping_ids": [],
+        "add_on_ids": []
+      },
+      {
+        "id": "churro-twists",
+        "name": "Churro Twists",
+        "category_id": "desserts",
+        "kind": "dessert",
+        "description": "Cinnamon-sugar twists with caramel dip.",
+        "ingredients": [],
+        "aliases": [
+          "churro twists",
+          "churros"
+        ],
+        "source_url": "https://www.roundtablepizza.com/menu/",
+        "price": null,
+        "availability": "unknown",
+        "variations": [],
+        "topping_ids": [],
+        "included_topping_ids": [],
+        "add_on_ids": []
+      },
+      {
+        "id": "bottled-drink",
+        "name": "20 OZ Bottles",
+        "category_id": "beverages",
+        "kind": "beverage",
+        "description": null,
+        "ingredients": [],
+        "aliases": [
+          "20 oz bottles",
+          "20 oz bottle",
+          "bottled drink"
+        ],
+        "source_url": "https://www.roundtablepizza.com/menu/",
+        "price": null,
+        "availability": "unknown",
+        "variations": [],
+        "topping_ids": [],
+        "included_topping_ids": [],
+        "add_on_ids": []
+      }
+    ]
+  }
+}

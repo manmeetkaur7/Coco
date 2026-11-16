@@ -4,7 +4,7 @@ import { AmbientBackground } from "@/components/ambient-background";
 export const metadata: Metadata = {
   title: "Coco | A new era of hospitality",
   description:
-    "Coco restaurant assistant — Sprint 1 foundation preview with clearly labeled sample restaurant data.",
+    "Coco — local Round Table Pizza menu and deterministic demo ordering with browser voice. No real order submission.",
 };
 export default function RootLayout({
   children,

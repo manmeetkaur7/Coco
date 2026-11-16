@@ -8,15 +8,29 @@ import {
 } from "../features/avatar/contracts";
 import { usePrivatePortrait } from "../features/avatar/use-private-portrait";
 
-export function AvatarExperience() {
+export function AvatarExperience({
+  activityState,
+  activityDescription,
+  conversationActive = false,
+}: {
+  activityState?: AvatarState;
+  activityDescription?: string;
+  conversationActive?: boolean;
+} = {}) {
   const [state, setState] = useState<AvatarState>("idle");
   const [motionEnabled, setMotionEnabled] = useState(true);
   const isDevelopment = process.env.NODE_ENV === "development";
   const portrait = usePrivatePortrait(isDevelopment);
+  const live =
+    conversationActive ||
+    (activityState !== undefined && activityState !== "idle");
   return (
     <>
       <AvatarDisplay
-        state={state}
+        state={live ? activityState : state}
+        activityDescription={
+          live || state === "idle" ? activityDescription : undefined
+        }
         portraitSrc={portrait.src}
         motionEnabled={motionEnabled}
         onPortraitError={portrait.markImageError}
@@ -25,7 +39,9 @@ export function AvatarExperience() {
         <span>PORTRAIT FOUNDATION</span>
         <p>
           Facial expressions, blinking, and lip-sync require a rigged avatar.
-          Voice is not connected.
+          {activityState === undefined
+            ? "Voice is not connected."
+            : "Browser voice states do not provide facial animation."}
         </p>
       </div>
       {isDevelopment && (
@@ -51,6 +67,7 @@ export function AvatarExperience() {
                 type="button"
                 key={value}
                 aria-pressed={state === value}
+                disabled={live}
                 onClick={() => setState(value)}
               >
                 {AVATAR_STATE_COPY[value].label}

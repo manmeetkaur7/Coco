@@ -11,12 +11,13 @@ export type {
   PlaybackClock,
   VisemeFrame,
 } from "./avatar/contracts";
-/** Integration boundaries only. No media capture or AI provider is active. */
+/** Provider boundaries. Browser voice is implemented; no LLM provider is active. */
 export interface TranscriptEntry {
   id: string;
   role: "customer" | "assistant";
   text: string;
   timestamp: string;
+  language?: string;
 }
 export interface SpeechInput {
   start(onText: (text: string) => void): Promise<void>;

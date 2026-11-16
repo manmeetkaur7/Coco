@@ -21,6 +21,7 @@ export default defineConfig({
       env: {
         NEXT_PUBLIC_API_BASE_URL: "http://127.0.0.1:8010",
         NEXT_TELEMETRY_DISABLED: "1",
+        COCO_TEST_DIST_DIR: ".next-test",
       },
     },
     {
@@ -28,7 +29,7 @@ export default defineConfig({
       url: "http://127.0.0.1:8010/health",
       reuseExistingServer: false,
       timeout: 60_000,
-      env: { CORS_ORIGINS: "http://127.0.0.1:3210" },
+      env: { CORS_ORIGINS: "http://127.0.0.1:3210", COCO_MODEL_ENABLED: "false" },
     },
   ],
 });

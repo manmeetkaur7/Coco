@@ -1,7 +1,8 @@
-"""Future domain ports. No provider, persistence, order, or AI behavior is active."""
+"""Legacy/future provider and persistence ports; Sprint 3 drafts are stateless."""
 from typing import Protocol
 from pydantic import BaseModel, Field
 from .schemas import Menu
+from .ordering_schemas import Catalog, RestaurantConfig, DraftResponse
 
 class OrderLine(BaseModel):
     menu_item_id: str
@@ -19,3 +20,9 @@ class OrderRepository(Protocol):
 
 class AIProvider(Protocol):
     async def respond(self, messages: list[dict[str, str]]) -> str: ...
+
+class CatalogRepository(Protocol):
+    def get_catalog(self, restaurant_id: str) -> tuple[RestaurantConfig, Catalog]: ...
+
+class DraftStore(Protocol):
+    def save(self, draft: DraftResponse) -> str: ...

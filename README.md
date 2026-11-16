@@ -2,7 +2,9 @@
 
 A digital human restaurant assistant, designed around thoughtful hospitality. The long-term vision is natural voice conversations, synchronized speech and facial expression, menu understanding, and restaurant ordering.
 
-**Sprint 2 adds a local portrait avatar foundation.** Coco supports idle, listening, thinking, and speaking visual previews, gentle whole-image motion, and an optional private reference PNG. The user-provided reference image is stored locally in ignored private-assets/ and can be displayed in development. Facial animation, blinking, lip-sync, voice, AI conversations, orders, and PostgreSQL are not implemented. Maison Olive and every menu item are clearly labeled fictional sample data. No paid avatar service or AI key is required. See [Sprint 2 avatar setup and limitations](docs/sprint-2-avatar.md).
+**Coco combines a real local language model with verified English demo ordering.** A loopback-only llama.cpp/Qwen model proposes structured conversation actions; the existing ordering engine validates every cart change. Clear ordering and confirmation use a fast path without inference. The dashboard labels unavailable models and rejected proposals honestly. No paid API, real restaurant submission or payment processing is implemented. Local prices, tax, availability and promotions are unverified and stay nullable. Browser speech is optional and may use vendor services; manual text works without microphone access. Punjabi/Hindi are experimental speech locales, not full ordering languages. [Local AI setup, safety and limitations](docs/local-conversational-ai.md). [Sprint 3 menu sources](docs/sprint-3-voice-ordering.md).
+
+The approved portrait is kept in ignored private-assets/ and is served only in local development. Whole-image motion is not facial animation, blinking or lip-sync. [Portrait privacy details](docs/sprint-2-avatar.md).
 
 ## Structure and stack
 
@@ -15,7 +17,17 @@ See frontend/package.json and backend/requirements*.txt for exact tested depende
 
 ## Windows PowerShell setup
 
-Open two terminals. No virtual environment activation is required, avoiding PowerShell execution-policy changes.
+Open backend and frontend terminals. For flexible local AI, also start the model service below. No virtual environment activation is required.
+
+Local model (one-time setup downloads free model weights and the portable CPU runtime inside ignored private-assets):
+
+```powershell
+Set-Location 'C:\Users\mkghu\Documents\Portfolio-Projects\Coco-AI'
+.\scripts\Setup-LocalModel.ps1
+.\scripts\Start-LocalModel.ps1
+# Stop only the Coco-owned model process when finished:
+# .\scripts\Stop-LocalModel.ps1
+```
 
 Backend terminal:
 
@@ -30,7 +42,7 @@ Frontend terminal:
 
 ```powershell
 Set-Location 'C:\Users\mkghu\Documents\Portfolio-Projects\Coco-AI\frontend'
-Copy-Item .env.example .env.local
+if (!(Test-Path .env.local)) { Copy-Item .env.example .env.local }
 npm ci
 npm run dev -- --hostname 127.0.0.1
 ```
@@ -41,17 +53,27 @@ The API defaults to http://127.0.0.1:8000. Change `frontend/.env.local` before s
 
 ## Current features
 
-- Responsive branding, portrait avatar foundation, honest empty transcript, disabled microphone/start/end controls.
+- Approved portrait and responsive design, live transcript, consent-based start/end voice sessions, safe microphone restart after browser pauses, mute/stop controls and browser text-to-speech.
+- Twelve official-source Round Table catalog entries, server-side search, categories, size/topping choices, quantities and an editable demo cart.
+- Authoritative nullable pricing, missing-data warnings, readback and stale-cart-safe demo confirmation. No real orders or payments.
 - Development-only avatar state controls, motion toggle, private PNG loading, and missing/error fallbacks. Original photos stay in ignored root `private-assets/` and are never served in production.
 - Live API connection checks every 15 seconds, loading state, timeout, error notice and retry.
-- Restaurant information and four menu previews fetched from the backend, including prices and dietary labels.
+- Restaurant/catalog data fetched from FastAPI; prices are unverified rather than guessed. Legacy fictional demo endpoints remain for compatibility.
 - Typed API client, response schemas and isolated future integration contracts.
+- Actual local inference, bounded session history/preferences, grounded recommendations, professional social responses, validated corrections and a deterministic fallback. Session memory clears on End Conversation and is not persisted.
 - Local CORS allowlist and OpenAPI docs.
 
 | Route | Purpose |
 | --- | --- |
 | GET /health | API process health |
-| GET /api/v1/assistant/status | Foundation phase and unavailable future capabilities |
+| GET /api/v1/assistant/status | Honest model/browser capability status |
+| GET /api/v1/assistant/model | Loopback model health and fallback status |
+| GET /api/v1/restaurants/round-table | Restaurant configuration and missing-data checklist |
+| GET /api/v1/restaurants/round-table/menu | Official-source catalog with nullable prices |
+| GET /api/v1/restaurants/round-table/menu/items?q= | Catalog search |
+| POST /api/v1/restaurants/round-table/cart/validate | Authoritative cart validation and pricing |
+| POST /api/v1/restaurants/round-table/order-drafts | Readback and demo-only confirmation |
+| POST /api/v1/restaurants/round-table/assistant/turn | Local-model proposal plus verified ordering, or labeled fallback |
 | GET /api/v1/restaurants/demo | Fictional sample restaurant |
 | GET /api/v1/restaurants/demo/menu | Fictional sample menu, USD |
 
@@ -81,14 +103,18 @@ Set-Location 'C:\Users\mkghu\Documents\Portfolio-Projects\Coco-AI\backend'
 Invoke-RestMethod http://127.0.0.1:8000/health
 ```
 
-For a manual integration check, start both servers, verify sample restaurant/menu content and connected status, stop the backend and wait up to 23 seconds for the next check/timeout, then restart it and select Retry connection. Verify narrow/mobile layout and keyboard navigation. No microphone permission should be requested.
+For an integration check, start both servers and follow the ordering examples in docs/sprint-3-voice-ordering.md. Microphone access requires an explicit Start Conversation or Resume microphone action; it never starts on page load or from typed messages alone. Browser tests use their own ports and an isolated .next-test folder, without replacing your running dev server. Test microphone capture and audible speech manually on your device. Greeting intents and resilient session policy are documented in docs/sprint-3-voice-conversation-fixes.md; Sprint 3 remains pending manual session and greeting verification.
+
+The implementation audit, test evidence, fixes, remaining manual checks and complete Git inventory are recorded in docs/sprint-3-audit.md. Physical microphone recognition and audible playback still require manual sign-off.
+
+The latest real-customer speech regressions (Coco/Koko/Cocoa, active-session Hey Google, pending Supreme selection, retained Large size and natural order completion) are documented in docs/sprint-3-customer-speech-fixes.md. Greetings never rewrite the displayed customer transcript, and partial names require a safe choice before adding an item.
 
 ## Planned features — require later sprint approval
 
-Rigged 3D avatar rendering, genuine blinking and expressions, streaming speech input/output, lip synchronization, conversation orchestration, provider integration, PostgreSQL menu/order persistence, validated order workflows, authentication and operational hardening. The current 2D portrait effect is not facial animation.
+Rigged facial animation/lip-sync, full Punjabi/Hindi ordering, verified local menu/pricing, persistent storage, richer local model evaluation, authenticated tenancy and approved POS/payment adapters remain future work. Current browser speech does not provide synchronized facial visemes.
 
 ## Git
 
-Sprint 1 is already tracked in the existing repository. Sprint 2 changes remain uncommitted for your review. No commits, pushes, repository creation, or deployments are performed automatically. Never force-add private-assets or move the original photo to public/.
+Sprints 1 and 2 are already tracked in the existing repository. Sprint 3 changes remain uncommitted for your review. No commits, pushes, repository creation, or deployments are performed automatically. Never force-add private-assets or move the original photo to public/.
 
 Toolchain limitation: Next.js lint plugins currently require ESLint 9, whose upstream package is marked deprecated. The latest compatible 9.x is pinned through package-lock.json. See docs/architecture.md for details.

@@ -8,14 +8,14 @@ test("preserves restaurant data and provides keyboard-operated avatar states", a
     page.getByRole("status").filter({ hasText: /Backend connected/ }),
   ).toBeVisible();
   await expect(
-    page.getByRole("heading", { name: "Maison Olive" }),
+    page.getByRole("heading", { name: "Round Table Pizza", exact: true }),
   ).toBeVisible();
   await expect(
-    page.getByRole("heading", { name: "Heirloom burrata" }),
+    page.getByRole("heading", { name: /King Arthur/ }),
   ).toBeVisible();
   await expect(
     page.getByRole("button", { name: "Start Conversation" }),
-  ).toBeDisabled();
+  ).toBeEnabled();
   await expect(
     page.getByRole("button", { name: "End Conversation" }),
   ).toBeDisabled();
